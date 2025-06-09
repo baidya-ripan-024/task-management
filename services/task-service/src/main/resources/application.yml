@@ -1,0 +1,39 @@
+# Server configuration
+server:
+  port: 8002
+
+spring:
+  application:
+    # Application name for the task service
+    name: TASK-SERVICE
+
+  datasource:
+    # Database connection details
+    url: jdbc:postgresql://localhost:5432/task_service_task_management_app
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      # Automatically update the database schema
+      ddl-auto: update
+    properties:
+      hibernate:
+        # Specify the Hibernate dialect for PostgreSQL
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+# Eureka client configuration
+eureka:
+  instance:
+    # Prefer using IP address for Eureka instance registration
+    prefer-ip-address: true
+
+  client:
+    # Enable registration with Eureka server
+    register-with-eureka: true
+    # Enable fetching registry from Eureka server
+    fetch-registry: true
+    serviceUrl:
+      # Eureka server URL
+      defaultZone: http://localhost:8761/eureka

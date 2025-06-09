@@ -1,0 +1,117 @@
+package com.organize.submissionservice.service.impl;
+
+import com.organize.submissionservice.exception.NotAdminException;
+import com.organize.submissionservice.exception.TaskNotFoundException;
+import com.organize.submissionservice.exception.TaskSubmissionException;
+import com.organize.submissionservice.model.Submission;
+import com.organize.submissionservice.model.TaskDto;
+import com.organize.submissionservice.repository.SubmissionRepository;
+import com.organize.submissionservice.service.SubmissionService;
+import com.organize.submissionservice.service.TaskService;
+import com.organize.submissionservice.service.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+/**
+ * Service class to handle submission operations.
+ */
+@RequiredArgsConstructor
+@Service
+public class SubmissionServiceImpl implements SubmissionService {
+
+    private final SubmissionRepository submissionRepository;
+    private final TaskService taskService;
+    private final UserService userService;
+
+    /**
+     * Submits a task submission.
+     */
+    @Override
+    public Submission submitTask(Integer taskId, String githubLink, Integer userId, String jwt)
+            throws TaskSubmissionException, TaskNotFoundException, NotAdminException {
+        TaskDto task = taskService.getTaskById(taskId, jwt);
+        if (task != null) {
+            Submission submission = new Submission();
+
+            submission.setTaskId(taskId);
+            submission.setUserId(userId);
+            submission.setGithubLink(githubLink);
+            submission.setSubmissionTime(LocalDateTime.now());
+
+            return submissionRepository.save(submission);
+        } else {
+            throw new TaskSubmissionException("Task not found with id " + taskId);
+        }
+    }
+
+    /**
+     * Retrieves a task submission by id.
+     */
+    @Override
+    public Submission getTaskSubmissionById(Integer submissionId) throws TaskSubmissionException {
+        return submissionRepository.findById(submissionId)
+                .orElseThrow(() -> new TaskSubmissionException("Submission not found with id " + submissionId));
+    }
+
+    /**
+     * Retrieves all task submissions.
+     */
+    @Override
+    public List<Submission> getAllSubmission() {
+        return submissionRepository.findAll();
+    }
+
+    /**
+     * Retrieves task submissions by task id.
+     */
+    @Override
+    public List<Submission> getTaskSubmissionsByTaskId(Integer taskId) throws TaskSubmissionException {
+        return submissionRepository.findByTaskId(taskId);
+    }
+
+    /**
+     * Updates a task submission status.
+     */
+    @Override
+    public Submission acceptOrDeclinedSubmission(Integer submissionId, String status) throws TaskNotFoundException {
+        Submission submission = getTaskSubmissionById(submissionId);
+
+        submission.setStatus(status); // update the submission status
+        if (status.equals("ACCEPTED")) {
+            taskService.completeTask(submission.getTaskId());
+        }
+        return submissionRepository.save(submission);
+    }
+
+    /**
+     * Deletes a task submission.
+     */
+    @Override
+    public void deleteTaskSubmission(Integer submissionId, Integer userId) throws TaskSubmissionException {
+        Submission submission = getTaskSubmissionById(submissionId); // this will throw exception if task is not found
+
+        if (!submission.getUserId().equals(userId)) {
+            throw new TaskSubmissionException("You don't have permission to delete this submission");
+        }
+
+        submissionRepository.deleteById(submission.getSubmissionId());
+    }
+
+    /**
+     * Updates a task submission.
+     */
+    @Override
+    public Submission updateTaskSubmission(Integer submissionId, String githubLink, Integer userId) throws TaskSubmissionException {
+        Submission isSubmissionFound = getTaskSubmissionById(submissionId);
+
+        if (!isSubmissionFound.getUserId().equals(userId)) {
+            throw new TaskSubmissionException("You don't have permission to delete this submission");
+        }
+
+        isSubmissionFound.setGithubLink(githubLink);
+        return submissionRepository.save(isSubmissionFound);
+    }
+}

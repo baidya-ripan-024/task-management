@@ -1,0 +1,36 @@
+server:
+  # Port number for the Submission Service
+  port: 8003
+
+spring:
+  application:
+    # Application name for the Submission Service
+    name: SUBMISSION-SERVICE
+  datasource:
+    # Database connection details for the Submission Service
+    url: jdbc:postgresql://localhost:5432/submission_service_task_management_app
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      # Update the database schema if it does not exist
+      ddl-auto: update
+    properties:
+      hibernate:
+        # PostgreSQL dialect for Hibernate
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+# Eureka client configuration
+eureka:
+  instance:
+    # Use the IP address of the instance instead of the hostname
+    prefer-ip-address: true
+  client:
+    # Register the Submission Service with Eureka
+    register-with-eureka: true
+    # Fetch the registry from Eureka
+    fetch-registry: true
+    serviceUrl:
+      # URL of the Eureka server
+      defaultZone: http://localhost:8761/eureka

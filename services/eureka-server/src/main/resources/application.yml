@@ -1,0 +1,20 @@
+# Application Settings
+spring:
+  application:
+    name: eureka-server
+
+# Server Settings
+server:
+  port: 8761
+
+# Eureka Server Settings
+eureka:
+  # Instance Settings
+  instance:
+    hostname: localhost
+  # Client Settings
+  client:
+    # Do not register with Eureka Server
+    register-with-eureka: false
+    # Do not fetch registry information from Eureka Server
+    fetch-registry: false

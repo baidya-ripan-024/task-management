@@ -1,0 +1,54 @@
+server:
+  port: 8000  # Define the port on which the server will run
+
+spring:
+  application:
+    name: GATEWAY-SERVICE  # Application name for identification
+  cloud:
+    gateway:
+      routes:
+        # Route configuration for USER-SERVICE
+        - id: USER-SERVICE
+          uri: lb://USER-SERVICE  # Load-balanced URI for user service
+          predicates:
+            - Path=/auth/**, /api/users/**, /users/**  # Path predicates for routing
+
+        # Route configuration for TASK-SERVICE
+        - id: TASK-SERVICE
+          uri: lb://TASK-SERVICE  # Load-balanced URI for task service
+          predicates:
+            - Path=/api/tasks/**, /tasks/**  # Path predicates for routing
+
+        # Route configuration for SUBMISSION-SERVICE
+        - id: SUBMISSION-SERVICE
+          uri: lb://SUBMISSION-SERVICE  # Load-balanced URI for submission service
+          predicates:
+            - Path=/api/submissions/**, /submissions/**  # Path predicates for routing
+
+      default-filters:
+        # Default filters applied to all routes
+        - DedupeResponseHeader=Access-Control-Allow-Credentials RETAIN_FIRST
+        - DedupeResponseHeader=Access-Control-Allow-Origin RETAIN_FIRST
+
+      globalcors:
+        corsConfigurations:
+          '[/**]':  # CORS configuration for all paths
+            allowed-origin-patterns:
+              - "*"  # Allow requests from any origin
+            allowedMethods:
+              - "*"  # Allow all HTTP methods
+            allowedHeaders:
+              - "*"  # Allow all headers
+            maxAge: 3600  # Cache preflight response for 3600 seconds
+            allow-credentials: true  # Allow credentials in CORS requests
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/  # Eureka server URL
+    fetchRegistry: true  # Fetch registry from Eureka server
+    registerWithEureka: true  # Register this service with Eureka
+  instance:
+    hostname: localhost  # Hostname for this instance
+    prefer-ip-address: true  # Prefer IP address over hostname
+    instance-id: ${spring.application.name}:${random.value}  # Unique instance ID
