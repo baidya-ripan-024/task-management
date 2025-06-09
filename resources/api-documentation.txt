@@ -1,0 +1,65 @@
+user-service
+---------------
+1. Signup [POST]
+   URL: http://localhost:8000/auth/signup
+
+2. Signin [POST]
+   URL: http://localhost:8000/auth/login
+
+3. Get User by JWT [GET]
+   URL: http://localhost:8000/api/users/profile
+
+4. Get All Users [GET]
+   URL: http://localhost:8000/api/users
+
+task-service
+---------------
+1. Create Task [POST]
+   URL: http://localhost:8000/api/tasks
+
+2. Get Task by ID [GET]
+   URL: http://localhost:8000/api/tasks/{id}
+
+3. Get All Tasks with Optional Filter [GET]
+   URL: http://localhost:8000/api/tasks?status=PENDING
+
+4. Get Tasks Assigned to User with Optional Filter [GET]
+   URL: http://localhost:8000/api/tasks/user?status=ASSIGNED
+
+5. Assign Task to User [PUT]
+   URL: http://localhost:8000/api/tasks/{task_id}/user/{user_id}/assigned
+
+6. Update Task [PUT]
+   URL: http://localhost:8000/api/tasks/{task_id}
+
+7. Complete Task [PUT]
+   URL: http://localhost:8000/api/tasks/{task_id}/complete
+
+8. Delete Task [DELETE]
+   URL: http://localhost:8000/api/tasks/{task_id}
+
+9. Get Assigned User Tasks [GET]
+   URL: http://localhost:8000/api/tasks/user
+
+submission-service
+---------------
+1. Submit Submission [POST]
+   URL: http://localhost:8000/api/submissions?taskId={task_id}&githubLink={github_link}
+
+2. Get Submission by ID [GET]
+   URL: http://localhost:8000/api/submissions/{submission_id}
+
+3. Get All Submissions [GET]
+   URL: http://localhost:8000/api/submissions
+
+4. Get Submissions by Task ID [GET]
+   URL: http://localhost:8000/api/submissions/task/{task_id}
+
+5. Accept or Decline Submission [PUT]
+   URL: http://localhost:8000/api/submissions/{submission_id}?status={status}
+
+6. Delete Submission [DELETE]
+   URL: http://localhost:8000/api/submissions/{submission_id}
+
+7. Update Submission [PUT]
+   URL: http://localhost:8000/api/submissions/{submission_id}/update-link?githubLink={new_github_link}
